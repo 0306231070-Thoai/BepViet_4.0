@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('questions_answers', function (Blueprint $table) {
+        Schema::create('question_answers', function (Blueprint $table) {
             $table->id(); // Mã câu hỏi/trả lời (PK)
 
             $table->unsignedBigInteger('parent_id')->nullable(); // ID câu hỏi gốc (NULL nếu là câu hỏi)
             // ID câu hỏi gốc (FK → chính bảng questions_answers.id, NULL nếu là câu hỏi)
-            $table->foreign('parent_id')->references('id')->on('questions_answers')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('question_answers')->onDelete('cascade');
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Người hỏi/trả lời (FK → users.id)
             $table->text('content'); // Nội dung trao đổi (câu hỏi hoặc câu trả lời)
