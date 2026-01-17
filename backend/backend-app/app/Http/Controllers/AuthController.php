@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-abstract class homeController
+abstract class AuthController
 {
     //
 }
