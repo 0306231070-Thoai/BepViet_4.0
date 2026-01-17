@@ -19,7 +19,10 @@ return new class extends Migration
             $table->enum('role', ['member', 'admin'])->default('member'); // Vai trò người dùng
             $table->string('avatar')->nullable(); // Ảnh đại diện
             $table->text('bio')->nullable(); // Tiểu sử cá nhân
-            $table->boolean('status')->default(true); // Trạng thái hoạt động (true = active, false = khóa)
+            // --- Trạng thái tài khoản người dùng ---
+            // true  (1) - Active  : Tài khoản đang hoạt động, được phép đăng nhập
+            // false (0) - Locked  : Tài khoản bị khóa / vô hiệu hóa
+            $table->boolean('status')->default(true);
             $table->timestamp('email_verified_at')->nullable(); // Thời điểm xác thực email
             $table->rememberToken(); // Token ghi nhớ đăng nhập
             $table->timestamps(); // Thời gian tạo và cập nhật

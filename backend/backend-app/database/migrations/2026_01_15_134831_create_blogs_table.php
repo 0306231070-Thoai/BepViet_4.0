@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id(); // Mã bài viết (PK)
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Tác giả bài viết
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Tác giả bài viết (FK => users.id)
             $table->string('title'); // Tiêu đề bài viết
             $table->text('content'); // Nội dung bài viết
-            $table->string('image')->nullable(); // Ảnh minh họa (nullable)
-            $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending'); // Trạng thái phê duyệt
+            $table->string('image')->nullable(); // Ảnh minh họa
+            // Trạng thái phê duyệt: đang chờ duyệt / được duyệt và hiển thị / bị từ chối
+            $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->timestamps(); // created_at & updated_at
         });
     }
