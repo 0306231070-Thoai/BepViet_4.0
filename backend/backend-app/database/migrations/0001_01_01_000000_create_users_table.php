@@ -19,7 +19,8 @@ return new class extends Migration
             $table->enum('role', ['member', 'admin'])->default('member'); // Vai trò người dùng
             $table->string('avatar')->nullable(); // Ảnh đại diện
             $table->text('bio')->nullable(); // Tiểu sử cá nhân
-            $table->boolean('status')->default(true); // Trạng thái hoạt động (true = active, false = khóa)
+            $table->tinyInteger('status')->default(1);
+            // Trạng thái hoạt động (true = active, false = khóa)
             $table->timestamp('email_verified_at')->nullable(); // Thời điểm xác thực email
             $table->rememberToken(); // Token ghi nhớ đăng nhập
             $table->timestamps(); // Thời gian tạo và cập nhật

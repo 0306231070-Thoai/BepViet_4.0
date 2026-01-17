@@ -71,10 +71,16 @@ class Recipe extends Model
      * Quan hệ 1-n với RecipeIngredient
      * Một recipe có nhiều nguyên liệu.
      */
-    public function ingredients()
+   public function ingredients()
     {
-        return $this->hasMany(RecipeIngredient::class);
+        return $this->belongsToMany(
+            Ingredient::class,
+            'recipe_ingredients',
+            'recipe_id',
+            'ingredient_id'
+        )->withPivot('quantity', 'unit');
     }
+
 
     /**
      * Quan hệ 1-n với Comment
@@ -84,4 +90,14 @@ class Recipe extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function cookbooks()
+    {
+        return $this->belongsToMany(
+            Cookbook::class,
+            'cookbook_details',
+            'recipe_id',
+            'cookbook_id'
+        );
+    }   
 }

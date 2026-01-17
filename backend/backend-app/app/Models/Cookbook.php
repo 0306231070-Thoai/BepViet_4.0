@@ -36,8 +36,13 @@ class Cookbook extends Model
      * Quan hệ 1-n với CookbookDetail.
      * Một cookbook có thể chứa nhiều recipe.
      */
-    public function details()
+    public function recipes()
     {
-        return $this->hasMany(CookbookDetail::class);
+        return $this->belongsToMany(
+            Recipe::class,
+            'cookbook_details',
+            'cookbook_id',
+            'recipe_id'
+        );
     }
 }
