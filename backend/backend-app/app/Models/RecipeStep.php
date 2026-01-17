@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class RecipeStep
  *
- * Đây là model đại diện cho bảng `recipe_steps`.
- * - Dùng để quản lý các bước nấu ăn trong một recipe.
+ * Model đại diện cho bảng `recipe_steps`
+ * - Lưu từng bước nấu ăn của công thức
  * - Mỗi bước có thứ tự (step_order) và hướng dẫn (instruction).
  */
 class RecipeStep extends Model
@@ -18,16 +18,13 @@ class RecipeStep extends Model
 
     /**
      * Các cột cho phép gán giá trị hàng loạt.
-     * - recipe_id: ID công thức
      * - step_order: thứ tự bước
      * - instruction: nội dung hướng dẫn
+     * - media_url: ảnh minh họa (nếu có)
      */
-    protected $fillable = ['recipe_id','step_order','instruction'];
+    protected $fillable = ['step_order', 'instruction', 'media_url'];
 
-    /**
-     * Quan hệ n-1 với Recipe
-     * Một bước nấu thuộc về một recipe.
-     */
+    /** Bước nấu thuộc về một recipe */
     public function recipe()
     {
         return $this->belongsTo(Recipe::class);

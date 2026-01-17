@@ -8,36 +8,35 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Cookbook
  *
- * Đây là model đại diện cho bảng `cookbooks`.
- * - Dùng để quản lý sổ tay nấu ăn của người dùng.
- * - Một user có thể có nhiều cookbook.
+ * Model đại diện cho bảng `cookbooks`
+ * - Bộ sưu tập công thức của user
  */
+
 class Cookbook extends Model
 {
     use HasFactory;
 
     /**
      * Các cột cho phép gán giá trị hàng loạt.
-     * - user_id: ID chủ sở hữu
      * - name: tên cookbook
      * - description: mô tả ngắn
      */
-    protected $fillable = ['user_id','name','description'];
+    protected $fillable = ['name', 'description'];
 
-    /**
-     * Quan hệ n-1 với User.
-     */
+    /** Cookbook thuộc về một user */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Quan hệ 1-n với CookbookDetail.
-     * Một cookbook có thể chứa nhiều recipe.
-     */
-    public function details()
+    /** Cookbook chứa nhiều recipe */
+    public function recipes()
     {
-        return $this->hasMany(CookbookDetail::class);
+        return $this->belongsToMany(
+            Recipe::class,
+            'cookbook_details',
+            'cookbook_id',
+            'recipe_id'
+        );
     }
 }
