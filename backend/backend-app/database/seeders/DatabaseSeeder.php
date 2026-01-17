@@ -33,23 +33,32 @@ class DatabaseSeeder extends Seeder
          */
 
         $this->call([
+            // 1. Gốc
             UserSeeder::class,
 
+            // 2. Master data
             CategorySeeder::class,
             IngredientSeeder::class,
 
+            // 3. Bảng chính
             RecipeSeeder::class,
+            CookbookSeeder::class,
             BlogSeeder::class,
 
+            // 4. Bảng phụ
             RecipeStepSeeder::class,
-            RecipeIngredientSeeder::class,
-
             CommentSeeder::class,
             QuestionAnswerSeeder::class,
 
+            // 5. Bảng trung gian
+            RecipeIngredientSeeder::class,
+            CookbookDetailSeeder::class,
+
+            // 6. Hệ thống
             FollowSeeder::class,
             ReportSeeder::class,
         ]);
+
 
         User::factory()->create([
             'username' => 'Test User',
