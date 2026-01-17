@@ -11,12 +11,16 @@ class CookbookSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+
+    /**
+     * Seed bảng cookbooks
+     */
+    public function run(): void
     {
         Cookbook::create([
             'user_id' => 2,
             'name' => 'Món Bắc yêu thích',
-            'description' => 'Tổng hợp các món miền Bắc',
+            'description' => 'Các món miền Bắc ngon nhất',
         ]);
     }
 }
