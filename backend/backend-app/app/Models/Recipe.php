@@ -8,28 +8,43 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Recipe
  *
- * Đây là model đại diện cho bảng `recipes`.
- * - Dùng để quản lý công thức món ăn.
- * - Liên kết với user (người tạo) và category (danh mục).
+ * Model đại diện cho bảng `recipes`
+ * - Lưu thông tin công thức món ăn
  */
+
 class Recipe extends Model
 {
     use HasFactory;
 
     /**
      * Các cột cho phép gán giá trị hàng loạt.
-     * - user_id: ID người tạo
-     * - category_id: ID danh mục
+     * - category_id: danh mục
      * - title: tên món ăn
      * - description: mô tả món ăn
      * - main_image: ảnh chính
-     * - cooking_time: thời gian nấu
+     * - cooking_time: thời gian nấu (phút)
      * - difficulty: độ khó (Easy/Medium/Hard)
      * - servings: số khẩu phần
-     * - status: trạng thái (Published/Draft)
+     */
+
+    /**
+     * Tui chỉ cho vào $fillable những cột mà người dùng được phép nhập.
+     * Các khóa ngoại như user_id, sender_id, follower_id đều do hệ thống xác định 
+     * dựa trên người đang đăng nhập nên tui không cho gán hàng loạt để tránh lỗi bảo mật.
+     */
+
+    /* category_id là dữ liệu nghiệp vụ do người dùng chọn khi tạo công thức.
+     * Khác với user_id và status là do hệ thống quản lý nên tui cho phép 
+     * gán hàng loạt category_id để thuận tiện khi tạo công thức.
+     */
+
+    /**
+     * Khi tạo công thức:
+     * User bắt buộc phải chọn danh mục
+     * Không có category => công thức vô nghĩa
+     * Category là dữ liệu nghiệp vụ, không phải dữ liệu bảo mật
      */
     protected $fillable = [
-        'user_id',
         'category_id',
         'title',
         'description',
@@ -37,41 +52,42 @@ class Recipe extends Model
         'cooking_time',
         'difficulty',
         'servings',
-        'status'
     ];
 
-    /**
-     * Quan hệ n-1 với User
-     * Một recipe thuộc về một user.
-     */
+    /** Công thức thuộc về một user */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Quan hệ n-1 với Category
-     * Một recipe thuộc về một category.
-     */
+    /** Công thức thuộc về một category */
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Quan hệ 1-n với RecipeStep
-     * Một recipe có nhiều bước nấu.
-     */
+    /** Một công thức có nhiều bước nấu */
     public function steps()
     {
         return $this->hasMany(RecipeStep::class);
     }
 
     /**
-     * Quan hệ 1-n với RecipeIngredient
-     * Một recipe có nhiều nguyên liệu.
+     * Một công thức có nhiều nguyên liệu
+     * - Lấy thêm quantity, unit từ bảng trung gian
      */
-   public function ingredients()
+
+    /**
+     * Lý do thiết kế:
+     * - Nguyên liệu là dữ liệu dùng chung (ví dụ: muối, đường, trứng...)
+     * - Số lượng và đơn vị không cố định, mà thay đổi theo từng công thức
+     * - Vì vậy quantity và unit không đặt trong bảng ingredients
+     *   mà đặt trong bảng trung gian `recipe_ingredients` 
+     */
+
+
+    public function ingredients()
+
     {
         return $this->belongsToMany(
             Ingredient::class,
@@ -82,15 +98,15 @@ class Recipe extends Model
     }
 
 
-    /**
-     * Quan hệ 1-n với Comment
-     * Một recipe có nhiều bình luận.
-     */
+    /** Một công thức có nhiều bình luận */
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
 
+
+    /** Một công thức có thể nằm trong nhiều cookbook */
     public function cookbooks()
     {
         return $this->belongsToMany(
@@ -99,5 +115,7 @@ class Recipe extends Model
             'recipe_id',
             'cookbook_id'
         );
-    }   
+
+    }
+
 }

@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Category
  *
- * Đây là model đại diện cho bảng `categories`.
- * - Dùng để quản lý danh mục món ăn (Miền Bắc, Miền Trung, Miền Nam).
- * - Một category có thể chứa nhiều recipe.
+ * Model đại diện cho bảng `categories`
+ * - Phân loại công thức (vùng miền, loại món, dịp lễ...)
  */
+
 class Category extends Model
 {
     use HasFactory;
@@ -24,10 +24,7 @@ class Category extends Model
      */
     protected $fillable = ['name', 'description', 'slug'];
 
-    /**
-     * Quan hệ 1-n với Recipe
-     * Một category có thể có nhiều recipe.
-     */
+    /** Một category có nhiều recipe */
     public function recipes()
     {
         return $this->hasMany(Recipe::class);

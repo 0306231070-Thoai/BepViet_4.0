@@ -2,10 +2,24 @@
 
 namespace App\Models;
 
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // 1. THÊM DÒNG NÀY
+
+
+/**
+ * Class User
+ *
+ * Model đại diện cho bảng `users`
+ * - Quản lý thông tin người dùng (member / admin)
+ * - Hỗ trợ xác thực đăng nhập (kế thừa Authenticatable)
+ */
+
 
 class User extends Authenticatable
 {
@@ -15,18 +29,27 @@ class User extends Authenticatable
     /**
      * Các cột cho phép gán giá trị hàng loạt.
      */
-    protected $fillable = [
-        'username', 
-        'email', 
-        'password', 
-        'role', 
-        'bio', 
-        'status',
-        'avatar', // Nên thêm avatar nếu bạn có dùng trong AuthController
-    ];
+
 
     /**
-     * Các cột bị ẩn khi trả về JSON.
+     * Các cột cho phép gán giá trị hàng loạt (mass assignment).
+     * - username: tên đăng nhập
+     * - email: địa chỉ email
+     * - password: mật khẩu đã mã hóa
+     * - bio: mô tả ngắn về người dùng
+     * - avatar: ảnh đại diện
+     */
+    protected $fillable = ['username', 'email', 'password', 'bio', 'avatar']; // Nên thêm avatar nếu bạn có dùng trong AuthController
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+
+    /**
+     * Các cột sẽ bị ẩn khi trả về sang JSON.
+     * - password: không hiển thị mật khẩu
+     * - remember_token: token ghi nhớ đăng nhập
      */
     protected $hidden = [
         'password',
@@ -34,7 +57,18 @@ class User extends Authenticatable
     ];
 
     /**
-     * Ép kiểu dữ liệu.
+
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+
+    /**
+     * Ép kiểu dữ liệu cho các cột.
+     * - email_verified_at: kiểu datetime
+     * - password: tự động hash khi gán
+     * - status: ép thành boolean (true/false)
+
      */
     protected function casts(): array
     {
@@ -45,12 +79,47 @@ class User extends Authenticatable
         ];
     }
 
-    // Các quan hệ recipes, comments, cookbooks... giữ nguyên như code của bạn
-    public function recipes() { return $this->hasMany(Recipe::class); }
-    public function comments() { return $this->hasMany(Comment::class); }
-    public function cookbooks() { return $this->hasMany(Cookbook::class); }
-    public function blogs() { return $this->hasMany(Blog::class); }
-    public function questions() { return $this->hasMany(QuestionAnswer::class); }
-    public function followers() { return $this->hasMany(Follow::class, 'following_id'); }
-    public function following() { return $this->hasMany(Follow::class, 'follower_id'); }
+
+    /** Một user có thể đăng nhiều công thức */
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class);
+    }
+
+    /** Một user có thể viết nhiều bình luận */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /** Một user có thể tạo nhiều cookbook */
+    public function cookbooks()
+    {
+        return $this->hasMany(Cookbook::class);
+    }
+
+    /** Một user có thể viết nhiều blog */
+    public function blogs()
+    {
+        return $this->hasMany(Blog::class);
+    }
+
+    /** Một user có thể hỏi hoặc trả lời nhiều câu hỏi */
+    public function questionAnswers()
+    {
+        return $this->hasMany(QuestionAnswer::class);
+    }
+
+    /** Danh sách người theo dõi user này */
+    public function followers()
+    {
+        return $this->hasMany(Follow::class, 'following_id');
+    }
+
+    /** Danh sách user mà user này đang theo dõi */
+    public function following()
+    {
+        return $this->hasMany(Follow::class, 'follower_id');
+    }
 }
+

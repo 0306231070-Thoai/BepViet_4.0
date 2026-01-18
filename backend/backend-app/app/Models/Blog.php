@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Blog
  *
- * Đây là model đại diện cho bảng `blogs`.
+ * Model đại diện cho bảng `blogs`.
  * - Quản lý bài viết chia sẻ của user.
- * - Một user có thể viết nhiều blog.
+ * - Bài viết chia sẻ kinh nghiệm nấu ăn.
  */
 class Blog extends Model
 {
@@ -18,15 +18,13 @@ class Blog extends Model
 
     /**
      * Các cột cho phép gán giá trị hàng loạt.
-     * - user_id: ID người viết
      * - title: tiêu đề bài viết
      * - content: nội dung
      * - image: ảnh minh họa
-     * - status: trạng thái (Approved/Pending)
      */
-    protected $fillable = ['user_id','title','content','image','status'];
+    protected $fillable = ['title', 'content', 'image'];
 
-    /** Quan hệ n-1 với User. */
+    /** Blog thuộc về một user */
     public function user()
     {
         return $this->belongsTo(User::class);

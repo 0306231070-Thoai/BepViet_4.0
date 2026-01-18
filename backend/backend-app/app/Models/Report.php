@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Report
  *
- * Đây là model đại diện cho bảng `reports`.
- * - Dùng để quản lý báo cáo vi phạm.
- * - Một user có thể gửi nhiều report.
+ * Model đại diện cho bảng `reports`.
+ *  - Dùng để quản lý báo cáo vi phạm.
+ *  - Báo cáo vi phạm nội dung
+ *  - Một user có thể gửi nhiều report.
  */
 class Report extends Model
 {
@@ -18,19 +19,15 @@ class Report extends Model
 
     /**
      * Các cột cho phép gán giá trị hàng loạt.
-     * - sender_id: ID người gửi báo cáo
-     * - target_id: ID đối tượng bị báo cáo
-     * - target_type: loại đối tượng (Comment/Recipe/Blog)
+     * - target_id: đối tượng bị báo cáo
+     * - target_type: loại đối tượng (Recipe/Blog/Comment/QuestionAnswer)
      * - reason: lý do báo cáo
-     * - status: trạng thái xử lý (Pending/Resolved)
      */
-    protected $fillable = ['sender_id','target_id','target_type','reason','status'];
+    protected $fillable = ['target_id', 'target_type', 'reason'];
 
-    /**
-     * Quan hệ n-1 với User (người gửi báo cáo).
-     */
+    /** Người gửi báo cáo */
     public function sender()
     {
-        return $this->belongsTo(User::class,'sender_id');
+        return $this->belongsTo(User::class, 'sender_id');
     }
 }
