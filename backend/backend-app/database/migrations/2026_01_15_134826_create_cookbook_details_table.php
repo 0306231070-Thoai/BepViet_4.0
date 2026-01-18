@@ -12,11 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cookbook_details', function (Blueprint $table) {
-            // Khóa ngoại tới bộ sưu tập
-            $table->foreignId('cookbook_id')->constrained('cookbooks')->onDelete('cascade'); 
-             // Khóa ngoại tới công thức
-            $table->foreignId('recipe_id')->constrained('recipes')->onDelete('cascade'); 
-            // Khóa chính kép để đảm bảo duy nhất - Mỗi công thức chỉ xuất hiện 1 lần trong 1 cookbook
+            $table->unsignedBigInteger('cookbook_id'); // ID bộ sưu tập (FK → cookbooks.id)
+            $table->unsignedBigInteger('recipe_id'); // ID công thức (FK → recipes.id)
+
+            // Khóa ngoại
+            $table->foreign('cookbook_id')->references('id')->on('cookbooks')->onDelete('cascade');
+            $table->foreign('recipe_id')->references('id')->on('recipes')->onDelete('cascade');
+
+            // Khóa chính kép để đảm bảo duy nhất
             $table->primary(['cookbook_id', 'recipe_id']);
 
             $table->timestamps();

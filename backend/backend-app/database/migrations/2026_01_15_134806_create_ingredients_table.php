@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ingredients', function (Blueprint $table) {
             $table->id(); // Mã nguyên liệu (PK)
-            $table->string('name'); // Tên nguyên liệu (thịt bò, hành lá…)
+            $table->string('name'); // Tên nguyên liệu
             $table->timestamps(); // created_at & updated_at
         });
     }
