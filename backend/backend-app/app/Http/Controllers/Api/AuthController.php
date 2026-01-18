@@ -79,10 +79,17 @@ $token = $user->createToken('auth_token')->plainTextToken;
         ], 200);
     }
 
-    public function logout(Request $request)
-    {
-        // Thu hồi token hiện tại
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Đã đăng xuất thành công']);
-    }
+    /**
+ * Xử lý đăng xuất người dùng
+ */
+public function logout(Request $request)
+{
+    // Xóa token hiện tại đang dùng để gọi API này
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Đã đăng xuất thành công!'
+    ]);
+}
 }
