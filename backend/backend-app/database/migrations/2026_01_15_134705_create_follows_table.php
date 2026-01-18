@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('follows', function (Blueprint $table) {
-            //$table->id();
-            $table->unsignedBigInteger('follower_id'); // Người theo dõi (FK → users.id)
-            $table->unsignedBigInteger('following_id'); // Người được theo dõi (FK → users.id)
+            
+            // ID người theo dõi (FK => users.id) => xóa user thì tự xóa follow liên quan
+            $table->foreignId('follower_id')->constrained('users')->onDelete('cascade');
 
-            // Khóa ngoại
-            $table->foreign('follower_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('following_id')->references('id')->on('users')->onDelete('cascade');
+            // ID người được theo dõi (FK => users.id) => xóa user thì tự xóa follow liên quan
+            $table->foreignId('following_id')->constrained('users')->onDelete('cascade');
 
-            // Khóa chính kép để đảm bảo duy nhất
+            // Khóa chính kép để đảm bảo duy nhất - 1 người chỉ có thể follow 1 người khác duy nhất 1 lần
             $table->primary(['follower_id', 'following_id']);
 
             // Nếu muốn lưu thêm thời gian follow
