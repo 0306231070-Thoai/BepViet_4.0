@@ -12,24 +12,28 @@ class UserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    
+    /**
+     * Seed bảng users
+     * - Tạo sẵn admin và member để làm dữ liệu gốc
+     */
+    public function run(): void
     {
         User::create([
             'username' => 'admin',
-            'password' => Hash::make('123456'),
             'email' => 'admin@bepviet.com',
-            'role' => 'admin',
+            'password' => Hash::make('123456'),
             'bio' => 'Quản trị viên hệ thống',
-            'status' => true,
+            'avatar' => null,
+            // role, status dùng default trong migration
         ]);
 
         User::create([
             'username' => 'member1',
-            'password' => Hash::make('123456'),
             'email' => 'member1@bepviet.com',
-            'role' => 'member',
+            'password' => Hash::make('123456'),
             'bio' => 'Thành viên yêu thích món Việt',
-            'status' => true,
+            'avatar' => null,
         ]);
     }
 }

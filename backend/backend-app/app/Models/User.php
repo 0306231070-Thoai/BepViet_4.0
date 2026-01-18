@@ -39,7 +39,12 @@ class User extends Authenticatable
      * - bio: mô tả ngắn về người dùng
      * - avatar: ảnh đại diện
      */
+<<<<<<< Updated upstream
     protected $fillable = ['username', 'email', 'password', 'bio', 'avatar']; // Nên thêm avatar nếu bạn có dùng trong AuthController
+=======
+    // Nên thêm avatar nếu có dùng trong AuthController
+    protected $fillable = ['username', 'email', 'password', 'bio', 'avatar'];
+>>>>>>> Stashed changes
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -122,4 +127,7 @@ class User extends Authenticatable
         return $this->hasMany(Follow::class, 'follower_id');
     }
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
