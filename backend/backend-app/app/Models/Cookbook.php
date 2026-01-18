@@ -29,7 +29,9 @@ class Cookbook extends Model
         return $this->belongsTo(User::class);
     }
 
+
     /** Cookbook chứa nhiều recipe */
+
     public function recipes()
     {
         return $this->belongsToMany(

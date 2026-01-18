@@ -85,7 +85,9 @@ class Recipe extends Model
      *   mà đặt trong bảng trung gian `recipe_ingredients` 
      */
 
+
     public function ingredients()
+
     {
         return $this->belongsToMany(
             Ingredient::class,
@@ -95,11 +97,14 @@ class Recipe extends Model
         )->withPivot('quantity', 'unit');
     }
 
+
     /** Một công thức có nhiều bình luận */
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
+
 
     /** Một công thức có thể nằm trong nhiều cookbook */
     public function cookbooks()
@@ -110,5 +115,7 @@ class Recipe extends Model
             'recipe_id',
             'cookbook_id'
         );
+
     }
+
 }

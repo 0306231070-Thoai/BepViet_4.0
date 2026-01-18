@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens; // 1. THÊM DÒNG NÀY
+
 
 /**
  * Class User
@@ -16,16 +20,16 @@ use Illuminate\Notifications\Notifiable;
  * - Hỗ trợ xác thực đăng nhập (kế thừa Authenticatable)
  */
 
+
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    // 2. THÊM HasApiTokens VÀO DANH SÁCH USE DƯỚI ĐÂY
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Các cột cho phép gán giá trị hàng loạt.
      */
+
 
     /**
      * Các cột cho phép gán giá trị hàng loạt (mass assignment).
@@ -35,7 +39,7 @@ class User extends Authenticatable
      * - bio: mô tả ngắn về người dùng
      * - avatar: ảnh đại diện
      */
-    protected $fillable = ['username', 'email', 'password', 'bio', 'avatar'];
+    protected $fillable = ['username', 'email', 'password', 'bio', 'avatar']; // Nên thêm avatar nếu bạn có dùng trong AuthController
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -53,6 +57,7 @@ class User extends Authenticatable
     ];
 
     /**
+
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -63,15 +68,17 @@ class User extends Authenticatable
      * - email_verified_at: kiểu datetime
      * - password: tự động hash khi gán
      * - status: ép thành boolean (true/false)
+
      */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'status' => 'boolean',
+            'status' => 'boolean', // Khớp với TinyInt (1 = true, 0 = false)
         ];
     }
+
 
     /** Một user có thể đăng nhiều công thức */
     public function recipes()
@@ -115,3 +122,4 @@ class User extends Authenticatable
         return $this->hasMany(Follow::class, 'follower_id');
     }
 }
+
