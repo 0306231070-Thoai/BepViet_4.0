@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('question_answers', function (Blueprint $table) {
             $table->id(); // Mã câu hỏi/trả lời (PK)
 
-            $table->unsignedBigInteger('parent_id')->nullable(); // ID câu hỏi gốc (NULL nếu là câu hỏi)
-            // ID câu hỏi gốc (FK → chính bảng questions_answers.id, NULL nếu là câu hỏi)
-            $table->foreign('parent_id')->references('id')->on('question_answers')->onDelete('cascade');
-
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Người hỏi/trả lời (FK → users.id)
+            // ID câu hỏi gốc: NULL (ko có id) => đây là câu hỏi --- NOT NULL (có id) => đây là câu trả lời
+            $table->foreignId('parent_id')->nullable()->constrained('question_answers')->onDelete('cascade');
+            // Người hỏi hoặc trả lời (FK => users.id)
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->text('content'); // Nội dung trao đổi (câu hỏi hoặc câu trả lời)
             $table->timestamps(); // created_at & updated_at
         });
