@@ -13,15 +13,10 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id(); // Mã bình luận (PK)
-            // Công thức được bình luận (FK => recipes.id)
-            $table->foreignId('recipe_id')->constrained('recipes')->onDelete('cascade');
-            // Người viết bình luận (FK =. users.id)
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('recipe_id')->constrained('recipes')->onDelete('cascade'); // Công thức liên kết
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Người viết bình luận
             $table->text('content'); // Nội dung bình luận
-            // --- Đánh giá công thức ---
-            // NULL: Người dùng chỉ bình luận, không đánh giá
-            // 1 – 5 sao: Mức độ hài lòng với công thức
-            $table->tinyInteger('rating_star')->nullable();
+            $table->tinyInteger('rating_star')->default(5); // Điểm đánh giá (1–5 sao)
             $table->timestamps(); // created_at & updated_at
         });
     }

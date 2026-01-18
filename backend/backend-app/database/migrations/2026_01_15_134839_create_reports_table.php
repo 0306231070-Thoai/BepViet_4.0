@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id(); // Mã báo cáo (PK)
-            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade'); // Người gửi báo cáo (FK => users.id)
+            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade'); // Người gửi báo cáo
             $table->unsignedBigInteger('target_id'); // ID nội dung bị báo cáo (công thức, bài viết, bình luận, hỏi đáp)
             $table->enum('target_type', ['Recipe', 'Blog', 'Comment', 'QuestionAnswer']); // Loại nội dung bị báo cáo
-            $table->text('reason')->nullable(); // Lý do vi phạm (lý do báo cáo)
-            // Trạng thái xử lý báo cáo: chưa được xử lý / đã được admin xem xét / đã được xử lý xong
-            $table->enum('status', ['Pending', 'Reviewed', 'Resolved'])->default('Pending');
+            $table->text('reason')->nullable(); // Lý do vi phạm
+            $table->enum('status', ['Pending', 'Reviewed', 'Resolved'])->default('Pending'); // Trạng thái xử lý
             $table->timestamps(); // created_at & updated_at
         });
     }

@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('recipe_ingredients', function (Blueprint $table) {
-            // Khóa ngoại tới công thức - Xác định nguyên liệu thuộc công thức nào
-            $table->foreignId('recipe_id')->constrained('recipes')->onDelete('cascade'); 
-            // Khóa ngoại tới nguyên liệu - Xác định nguyên liệu được sử dụng
-            $table->foreignId('ingredient_id')->constrained('ingredients')->onDelete('cascade');
-            $table->decimal('quantity', 8, 2)->nullable(); // Số lượng nguyên liệu cần dùng
+            //$table->id();
+            $table->unsignedBigInteger('recipe_id'); // ID công thức (FK → recipes.id)
+            $table->unsignedBigInteger('ingredient_id'); // ID nguyên liệu (FK → ingredients.id)
+            $table->decimal('quantity', 8, 2)->nullable(); // Số lượng nguyên liệu
             $table->string('unit')->nullable(); // Đơn vị đo (g, kg, thìa, bát…)
-            // Khóa chính kép để đảm bảo duy nhất (1 nguyên liệu chỉ xuất hiện 1 lần trong công thức)
+
+            // Khóa ngoại
+            $table->foreign('recipe_id')->references('id')->on('recipes')->onDelete('cascade');
+            $table->foreign('ingredient_id')->references('id')->on('ingredients')->onDelete('cascade');
+
+            // Khóa chính kép để đảm bảo duy nhất
             $table->primary(['recipe_id', 'ingredient_id']);
 
             $table->timestamps();

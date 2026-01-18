@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // Mã danh mục (PK)
             $table->string('name'); // Tên danh mục (VD: Vùng miền, Loại món, Dịp lễ…)
             $table->text('description')->nullable(); // Mô tả danh mục
-            $table->string('slug')->unique(); // Chuỗi định danh URL không dấu - Dùng cho SEO và routing frontend
+            $table->string('slug')->unique(); // Chuỗi định danh URL không dấu
             $table->timestamps(); // created_at & updated_at
         });
     }

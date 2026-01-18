@@ -13,9 +13,8 @@
         {
             Schema::create('cookbooks', function (Blueprint $table) {
                 $table->id(); // Mã bộ sưu tập (PK)
-                // Xóa user => xóa toàn bộ cookbook
-                $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Chủ sở hữu bộ sưu tập
-                $table->string('name'); // Tên bộ sưu tập (Món yêu thích, Món chay, Món đã nấu...)
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Chủ sở hữu
+                $table->string('name'); // Tên bộ sưu tập
                 $table->text('description')->nullable(); // Mô tả bộ sưu tập
                 $table->timestamps(); // created_at & updated_at
             });
