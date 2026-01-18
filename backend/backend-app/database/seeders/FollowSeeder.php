@@ -12,12 +12,7 @@ class FollowSeeder extends Seeder
      * Run the database seeds.
      */
 
-    /**
-     * Seed bảng follows
-     * - Quan hệ theo dõi giữa user
-     */
-    public function run(): void
-    {
+    public function run() {
         DB::table('follows')->insert([
             'follower_id' => 2,
             'following_id' => 1,

@@ -4,20 +4,16 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\CookbookDetail;
 
 class CookbookDetailSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-
-    /**
-     * Seed bảng cookbook_details
-     */
-    public function run(): void
+    public function run()
     {
-        DB::table('cookbook_details')->insert([
+        CookbookDetail::create([
             'cookbook_id' => 1,
             'recipe_id' => 1,
         ]);

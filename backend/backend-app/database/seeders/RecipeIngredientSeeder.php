@@ -4,33 +4,26 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\RecipeIngredient;
 
 class RecipeIngredientSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-
-    /**
-     * Seed bảng recipe_ingredients
-     * - Lưu số lượng và đơn vị cho từng công thức
-     */
-    public function run(): void
+    public function run()
     {
-        DB::table('recipe_ingredients')->insert([
-            [
-                'recipe_id' => 1,
-                'ingredient_id' => 1,
-                'quantity' => 500,
-                'unit' => 'g',
-            ],
-            [
-                'recipe_id' => 1,
-                'ingredient_id' => 2,
-                'quantity' => 200,
-                'unit' => 'g',
-            ],
+        RecipeIngredient::create([
+            'recipe_id' => 1,
+            'ingredient_id' => 1,
+            'quantity' => 500,
+            'unit' => 'g',
+        ]);
+        RecipeIngredient::create([
+            'recipe_id' => 1,
+            'ingredient_id' => 2,
+            'quantity' => 200,
+            'unit' => 'g',
         ]);
     }
 }
