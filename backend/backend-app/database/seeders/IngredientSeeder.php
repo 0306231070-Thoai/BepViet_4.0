@@ -11,7 +11,12 @@ class IngredientSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    
+   /**
+     * Seed bảng ingredients
+     * - Danh sách nguyên liệu dùng chung
+     */
+    public function run(): void
     {
         Ingredient::create(['name' => 'Thịt bò']);
         Ingredient::create(['name' => 'Bánh phở']);
