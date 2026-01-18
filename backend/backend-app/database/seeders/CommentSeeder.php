@@ -11,17 +11,13 @@ class CommentSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-
-    /**
-     * Seed bảng comments
-     */
-    public function run(): void
+    public function run()
     {
         Comment::create([
             'recipe_id' => 1,
             'user_id' => 2,
-            'content' => 'Phở rất ngon, nước dùng đậm đà!',
-            'rating_star' => null, // không bắt buộc đánh giá
+            'content' => 'Phở ngon tuyệt, nước dùng ngọt!',
+            'rating_star' => 5,
         ]);
     }
 }
