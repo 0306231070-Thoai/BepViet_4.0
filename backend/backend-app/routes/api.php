@@ -3,6 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+//Use controller admin 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminPostController;
+use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminSettingController;
+
 use App\Http\Controllers\Api\AuthController;
 
 // Public routes
@@ -18,20 +26,17 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 //API ADMIN
-Route::middleware(['auth:sanctum','admin'])->prefix('admin')->group(function () {
 
-    Route::get('/users', [AdminUserController::class, 'index']);
-    Route::put('/users/{id}/lock', [AdminUserController::class, 'lock']);
-    Route::put('/users/{id}/role', [AdminUserController::class, 'changeRole']);
+    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
 
-    Route::get('/recipes/pending', [AdminRecipeController::class, 'pending']);
-    Route::put('/recipes/{id}/approve', [AdminRecipeController::class, 'approve']);
-    Route::put('/recipes/{id}/hide', [AdminRecipeController::class, 'hide']);
+    Route::apiResource('/users', AdminUserController::class);
+    Route::apiResource('/categories', AdminCategoryController::class);
 
-    Route::get('/blogs/pending', [AdminBlogController::class, 'pending']);
-    Route::put('/blogs/{id}/approve', [AdminBlogController::class, 'approve']);
-    Route::put('/blogs/{id}/reject', [AdminBlogController::class, 'reject']);
+    Route::get('/posts', [AdminPostController::class, 'index']);
+    Route::put('/posts/{id}/approve', [AdminPostController::class, 'approve']);
 
     Route::get('/reports', [AdminReportController::class, 'index']);
     Route::put('/reports/{id}/resolve', [AdminReportController::class, 'resolve']);
-});
+
+    Route::get('/settings', [AdminSettingController::class, 'index']);
+    Route::put('/settings', [AdminSettingController::class, 'update']);
