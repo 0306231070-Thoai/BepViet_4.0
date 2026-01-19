@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // 1. THÊM DÒNG NÀY
 
+use App\Models\Blog;
+use App\Models\User;
+
 
 /**
  * Class User
@@ -100,28 +103,36 @@ class User extends Authenticatable
     {
         return $this->hasMany(Cookbook::class);
     }
-
-    /** Một user có thể viết nhiều blog */
-    public function blogs()
-    {
-        return $this->hasMany(Blog::class);
-    }
-
     /** Một user có thể hỏi hoặc trả lời nhiều câu hỏi */
     public function questionAnswers()
     {
         return $this->hasMany(QuestionAnswer::class);
     }
-
-    /** Danh sách người theo dõi user này */
-    public function followers()
+    // Blog của user
+    public function blogs()
     {
-        return $this->hasMany(Follow::class, 'following_id');
+        return $this->hasMany(Blog::class);
     }
 
-    /** Danh sách user mà user này đang theo dõi */
+    // Những người mình đang theo dõi
     public function following()
     {
-        return $this->hasMany(Follow::class, 'follower_id');
+        return $this->belongsToMany(
+            User::class,
+            'follows',
+            'follower_id',
+            'following_id'
+        );
+    }
+
+    // Những người theo dõi mình
+    public function followers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'follows',
+            'following_id',
+            'follower_id'
+        );
     }
 }

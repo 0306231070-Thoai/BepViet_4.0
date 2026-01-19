@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\BlogController;
+use App\Http\Controllers\Api\BlogFeedController;
 
 // Public routes (Đăng ký, Đăng nhập, Quên mật khẩu)
 Route::post('/register', [AuthController::class, 'register']);
@@ -40,4 +42,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dành cho các mục như "Kho món ngon", "Đang theo dõi" trên Sidebar
     Route::get('/my-recipes', [ProfileController::class, 'getMyRecipes']);
     Route::get('/following', [ProfileController::class, 'getFollowing']);
+
+
+     // BLOG FEED
+    //Route::get('/blog-feed', [BlogFeedController::class, 'index']);
+
+    // BLOG
+    Route::post('/blogs', [BlogController::class, 'store']);
+    Route::get('/blogs/{id}', [BlogController::class, 'show']);
 });
+
+Route::get('/blog-feed', [BlogFeedController::class, 'index']);
+

@@ -12,21 +12,33 @@ use Illuminate\Database\Eloquent\Model;
  * - Quản lý bài viết chia sẻ của user.
  * - Bài viết chia sẻ kinh nghiệm nấu ăn.
  */
+    
+
 class Blog extends Model
 {
     use HasFactory;
-
     /**
      * Các cột cho phép gán giá trị hàng loạt.
      * - title: tiêu đề bài viết
      * - content: nội dung
      * - image: ảnh minh họa
      */
-    protected $fillable = ['title', 'content', 'image'];
-
+    protected $fillable = [
+        'user_id',
+        'title',
+        'content',
+        'image',
+        'status',
+    ];
     /** Blog thuộc về một user */
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Nếu sau này có comment
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }
