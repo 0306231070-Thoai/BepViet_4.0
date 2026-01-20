@@ -9,7 +9,10 @@ class BlogSeeder extends Seeder
 {
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('blogs')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        
 
         DB::table('blogs')->insert([
             [

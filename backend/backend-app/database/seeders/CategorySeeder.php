@@ -21,5 +21,10 @@ class CategorySeeder extends Seeder
         Category::create(['name' => 'Miền Bắc', 'description' => 'Ẩm thực miền Bắc', 'slug' => 'mien-bac']);
         Category::create(['name' => 'Miền Trung', 'description' => 'Ẩm thực miền Trung', 'slug' => 'mien-trung']);
         Category::create(['name' => 'Miền Nam', 'description' => 'Ẩm thực miền Nam', 'slug' => 'mien-nam']);
+        Category::insert([
+            ['name' => 'Ẩm thực', 'slug' => 'am-thuc'],
+            ['name' => 'Món chay', 'slug' => 'mon-chay'],
+            ['name' => 'Đặc sản vùng miền', 'slug' => 'dac-san']
+        ]);
     }
 }

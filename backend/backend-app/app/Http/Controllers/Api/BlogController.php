@@ -28,20 +28,15 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        $blog = Blog::with([
-                'user:id,username',
-                'category:id,name'
-            ])->find($id);
+        $blog = Blog::where('id', $id)
+            ->where('status', 'Approved')
+            ->first();
 
         if (!$blog) {
-            return response()->json([
-                'message' => 'Blog not found'
-            ], 404);
+            return response()->json(['message' => 'Not found'], 404);
         }
 
-        return response()->json([
-            'data' => $blog
-        ]);
+        return response()->json($blog);
     }
 
     /**
