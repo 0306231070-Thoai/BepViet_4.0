@@ -34,10 +34,15 @@ class BlogController extends Controller
     // Xem chi tiết blog
     public function show($id)
     {
-        $blog = Blog::with('user:id,username,avatar')
-            ->where('status', 'Approved')
-            ->findOrFail($id);
+        $blog = Blog::with([
+            'user:id,username,avatar',
+            'category:id,name'
+        ])->findOrFail($id);
 
-        return response()->json($blog);
+        return response()->json([
+            'status' => 'success',
+            'data' => $blog
+        ]);
     }
+
 }

@@ -45,12 +45,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
      // BLOG FEED
-    //Route::get('/blog-feed', [BlogFeedController::class, 'index']);
+    Route::get('/blog-feed', [BlogFeedController::class, 'index']);
 
     // BLOG
+    Route::get('/blogs', [BlogController::class, 'store']);
     Route::post('/blogs', [BlogController::class, 'store']);
     Route::get('/blogs/{id}', [BlogController::class, 'show']);
+
+    Route::get('/blogs/{id}/comments', [BlogCommentController::class, 'index']);
+    Route::post('/blogs/{id}/comments', [BlogCommentController::class, 'store'])->middleware('auth:sanctum');
+
 });
 
-Route::get('/blog-feed', [BlogFeedController::class, 'index']);
+
 

@@ -35,10 +35,13 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class);
     }
-
+    public function category()
+    {
+        return $this->belongsTo(BlogCategory::class);
+    }
     // Nếu sau này có comment
     public function comments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(BlogComment::class);
     }
 }
