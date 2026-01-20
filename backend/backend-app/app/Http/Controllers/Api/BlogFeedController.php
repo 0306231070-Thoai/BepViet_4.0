@@ -31,6 +31,7 @@ class BlogFeedController extends Controller
     return response()->json($blogs);
 }
 
+
     // public function index(Request $request)
     // {
     //     $user = $request->user();

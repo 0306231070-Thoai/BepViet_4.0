@@ -12,6 +12,10 @@ use App\Http\Controllers\Api\BlogFeedController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+ Route::get('/blogs/{id}', [BlogController::class, 'show']);
+  // BLOG FEED
+    Route::get('/blog-feed', [BlogController::class, 'feed']);
+    Route::get('/blog-feed', [BlogFeedController::class, 'index']);
 
 // Protected routes (Yêu cầu đăng nhập qua Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
@@ -44,13 +48,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/following', [ProfileController::class, 'getFollowing']);
 
 
-     // BLOG FEED
-    Route::get('/blog-feed', [BlogFeedController::class, 'index']);
+    
 
-    // BLOG
-    Route::get('/blogs', [BlogController::class, 'store']);
+    // BLOG   
     Route::post('/blogs', [BlogController::class, 'store']);
-    Route::get('/blogs/{id}', [BlogController::class, 'show']);
+    // BLOG COMMENTS
 
     Route::get('/blogs/{id}/comments', [BlogCommentController::class, 'index']);
     Route::post('/blogs/{id}/comments', [BlogCommentController::class, 'store'])->middleware('auth:sanctum');

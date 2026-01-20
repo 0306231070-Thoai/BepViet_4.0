@@ -8,41 +8,68 @@ use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    // Tạo blog
-    public function store(Request $request)
+    /**
+     * ================= BLOG FEED (PUBLIC)
+     * GET /api/blog-feed
+     */
+    public function feed()
     {
-        $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
-            'image'   => 'nullable|string', // hoặc file nếu sau này upload
-        ]);
-
-        $blog = Blog::create([
-            'user_id' => $request->user()->id,
-            'title'   => $request->title,
-            'content' => $request->content,
-            'image'   => $request->image,
-            'status'  => 'Pending', // admin duyệt
-        ]);
-
-        return response()->json([
-            'message' => 'Tạo bài viết thành công, chờ duyệt',
-            'data' => $blog
-        ], 201);
+        return Blog::with([
+                'user:id,username',
+                'category:id,name'
+            ])
+            ->latest()
+            ->paginate(5);
     }
 
-    // Xem chi tiết blog
+    /**
+     * ================= BLOG DETAIL (PUBLIC)
+     * GET /api/blogs/{id}
+     */
     public function show($id)
     {
         $blog = Blog::with([
-            'user:id,username,avatar',
-            'category:id,name'
-        ])->findOrFail($id);
+                'user:id,username',
+                'category:id,name'
+            ])->find($id);
+
+        if (!$blog) {
+            return response()->json([
+                'message' => 'Blog not found'
+            ], 404);
+        }
 
         return response()->json([
-            'status' => 'success',
             'data' => $blog
         ]);
     }
 
+    /**
+     * ================= CREATE BLOG (AUTH)
+     * POST /api/blogs
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string',
+            'image'       => 'nullable|string',
+            'category_id' => 'nullable|integer|exists:categories,id',
+        ]);
+
+        $blog = Blog::create([
+            'user_id'     => $request->user()->id,
+            'title'       => $request->title,
+            'excerpt'     => $request->excerpt ?? null,
+            'content'     => $request->content,
+            'image'       => $request->image,
+            'category_id' => $request->category_id,
+            'status'      => 'published', // hoặc pending
+        ]);
+
+        return response()->json([
+            'message' => 'Tạo bài viết thành công',
+            'data'    => $blog
+        ], 201);
+    }
 }
