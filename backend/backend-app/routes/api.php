@@ -7,15 +7,17 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\BlogFeedController;
-
+use App\Http\Controllers\Api\BlogCommentController;
 // Public routes (Đăng ký, Đăng nhập, Quên mật khẩu)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
- Route::get('/blogs/{id}', [BlogController::class, 'show']);
-  // BLOG FEED
-    Route::get('/blog-feed', [BlogController::class, 'feed']);
-    Route::get('/blog-feed', [BlogFeedController::class, 'index']);
+// BLOG FEED & CHI TIẾT BÀI VIẾT
+Route::get('/blog-feed', [BlogController::class, 'feed']);
+Route::get('/blogs/{id}', [BlogController::class, 'show']);
+
+// Blog comments (xem comment KHÔNG cần login)
+Route::get('/blogs/{id}/comments', [BlogCommentController::class, 'index']);
 
 // Protected routes (Yêu cầu đăng nhập qua Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
@@ -54,9 +56,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blogs', [BlogController::class, 'store']);
     // BLOG COMMENTS
 
+    // Blog comments (xem comment KHÔNG cần login)
     Route::get('/blogs/{id}/comments', [BlogCommentController::class, 'index']);
-    Route::post('/blogs/{id}/comments', [BlogCommentController::class, 'store'])->middleware('auth:sanctum');
-
 });
 
 

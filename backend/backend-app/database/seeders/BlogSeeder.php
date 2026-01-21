@@ -10,9 +10,9 @@ class BlogSeeder extends Seeder
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('blog_comments')->truncate();
         DB::table('blogs')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        
 
         DB::table('blogs')->insert([
             [
@@ -36,6 +36,7 @@ class BlogSeeder extends Seeder
                 'image' => 'blogs/bun-cha-hang-quat.jpg',
                 'user_id' => 1,
                 'category_id' => 1,
+                'status' => 'Approved',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -56,9 +57,11 @@ class BlogSeeder extends Seeder
                 'image' => 'blogs/top-5-pho-ha-noi.jpg',
                 'user_id' => 1,
                 'category_id' => 1,
+                'status' => 'Approved',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
     }
 }
+

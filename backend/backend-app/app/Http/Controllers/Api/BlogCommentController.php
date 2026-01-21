@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BlogComment;
 use Illuminate\Http\Request;
 
 class BlogCommentController extends Controller
 {
+    // ===== GET COMMENTS =====
     public function index($blogId)
     {
         $comments = BlogComment::with('user:id,username,avatar')
@@ -17,23 +19,20 @@ class BlogCommentController extends Controller
         return response()->json($comments);
     }
 
-
-    public function store(Request $request, $blogId)
+    // ===== POST COMMENT =====
+    public function store(Request $request, $id)
     {
         $request->validate([
-            'content' => 'required|min:2'
+            'content' => 'required|string'
         ]);
 
         $comment = BlogComment::create([
-            'blog_id' => $blogId,
+            'blog_id' => $id,
             'user_id' => auth()->id(),
             'content' => $request->content
         ]);
 
-        return response()->json(
-            $comment->load('user:id,username,avatar'),
-            201
-        );
+        return $comment->load('user:id,username,avatar');
     }
-    
+
 }

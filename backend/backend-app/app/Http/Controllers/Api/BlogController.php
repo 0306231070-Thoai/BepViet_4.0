@@ -8,41 +8,36 @@ use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    /**
-     * ================= BLOG FEED (PUBLIC)
-     * GET /api/blog-feed
-     */
     public function feed()
     {
-        return Blog::with([
-                'user:id,username',
-                'category:id,name'
-            ])
-            ->latest()
-            ->paginate(5);
+        return response()->json(
+            Blog::with([
+                    'user:id,username,avatar',
+                    'category:id,name'
+                ])
+                ->where('status', 'Approved')
+                ->latest()
+                ->paginate(5)
+        );
     }
 
-    /**
-     * ================= BLOG DETAIL (PUBLIC)
-     * GET /api/blogs/{id}
-     */
+    // ===== BLOG DETAIL =====
     public function show($id)
     {
-        $blog = Blog::where('id', $id)
-            ->where('status', 'Approved')
-            ->first();
+        $blog = Blog::with([
+            'user:id,username,avatar',
+            'comments.user:id,username,avatar'
+        ])->find($id);
 
         if (!$blog) {
-            return response()->json(['message' => 'Not found'], 404);
+            return response()->json([
+                'message' => 'Không tìm thấy bài viết'
+            ], 404);
         }
 
         return response()->json($blog);
     }
-
-    /**
-     * ================= CREATE BLOG (AUTH)
-     * POST /api/blogs
-     */
+    
     public function store(Request $request)
     {
         $request->validate([

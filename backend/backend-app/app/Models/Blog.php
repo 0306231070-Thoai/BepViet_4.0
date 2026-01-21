@@ -18,12 +18,13 @@ use App\Models\Category;
 class Blog extends Model
 {
     protected $fillable = [
-        'user_id',
-        'category_id',
         'title',
+        'excerpt',
         'content',
         'image',
-        'status'
+        'status',
+        'user_id',
+        'category_id',
     ];
 
     public function user()
@@ -34,5 +35,10 @@ class Blog extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(BlogComment::class)->latest();
     }
 }
