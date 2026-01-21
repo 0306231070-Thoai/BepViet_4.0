@@ -26,7 +26,6 @@ class CookbookController extends Controller
             'data' => $cookbooks
         ]);
     }
-
     /**
      * Tạo mới một bộ sưu tập với hình ảnh được chọn sẵn.
      */
@@ -37,7 +36,6 @@ class CookbookController extends Controller
             'description' => 'nullable|string|max:500',
             'image' => 'nullable|string', // Chấp nhận tên file ảnh có sẵn từ frontend
         ]);
-
         $cookbook = new Cookbook();
         $cookbook->name = $request->name;
         $cookbook->description = $request->description;
@@ -54,7 +52,6 @@ class CookbookController extends Controller
             'data' => $cookbook
         ], 201);
     }
-
     /**
      * Lấy chi tiết bộ sưu tập và danh sách món ăn bên trong.
      */
@@ -72,10 +69,6 @@ class CookbookController extends Controller
             'data' => $cookbook
         ]);
     }
-
-
-
-    
     /**
      * Thêm một công thức vào bộ sưu tập (quan hệ n-n).
      */
@@ -84,10 +77,7 @@ class CookbookController extends Controller
         $request->validate([
             'recipe_id' => 'required|exists:recipes,id'
         ]);
-
         $cookbook = Cookbook::where('user_id', Auth::id())->findOrFail($id);
-
-        // syncWithoutDetaching giúp tránh lỗi Integrity constraint violation nếu add trùng
         $cookbook->recipes()->syncWithoutDetaching([$request->recipe_id]);
 
         return response()->json([

@@ -92,18 +92,15 @@ class ProfileController extends Controller
 
         if ($request->hasFile('avatar')) {
             $user = $request->user();
-            
             // Xóa ảnh cũ
             if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                 Storage::disk('public')->delete($user->avatar);
             }
-
             // Lưu ảnh mới
             $path = $request->file('avatar')->store('avatars', 'public');
             
             $user->avatar = $path;
             $user->save();
-
             return response()->json([
                 'status' => 'success',
                 'message' => 'Cập nhật ảnh đại diện thành công!',
@@ -135,7 +132,6 @@ class ProfileController extends Controller
                 'message' => $validator->errors()->first()
             ], 422, [], JSON_UNESCAPED_UNICODE);
         }
-
         $user = $request->user();
 
         // Kiểm tra mật khẩu cũ
