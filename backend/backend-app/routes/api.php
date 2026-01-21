@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\BlogFeedController;
 use App\Http\Controllers\Api\BlogCommentController;
+use App\Http\Controllers\Api\FollowController;
 // Public routes (Đăng ký, Đăng nhập, Quên mật khẩu)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -57,7 +58,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // BLOG COMMENTS
 
     // Blog comments (xem comment KHÔNG cần login)
-    Route::get('/blogs/{id}/comments', [BlogCommentController::class, 'index']);
+    Route::get('/blogs/{id}/comments', [BlogCommentController::class, 'store']);
+
+    // FOLLOW USER
+    Route::post('/follow/{id}', [FollowController::class, 'toggle']);
+    Route::get('/following', [FollowController::class, 'following']);
+    Route::get('/blogs/following', [BlogController::class, 'followingFeed']);
 });
 
 

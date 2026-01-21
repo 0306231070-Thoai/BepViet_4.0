@@ -122,10 +122,9 @@ class User extends Authenticatable
             'follows',
             'follower_id',
             'following_id'
-        );
+        )->withTimestamps();
     }
 
-    // Những người theo dõi mình
     public function followers()
     {
         return $this->belongsToMany(
@@ -133,6 +132,6 @@ class User extends Authenticatable
             'follows',
             'following_id',
             'follower_id'
-        );
+        )->withTimestamps();
     }
 }

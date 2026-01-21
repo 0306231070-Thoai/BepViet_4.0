@@ -8,31 +8,34 @@ use Illuminate\Http\Request;
 
 class BlogCommentController extends Controller
 {
-    // ===== GET COMMENTS =====
-    public function index($blogId)
+    // GET /blogs/{id}/comments
+    public function index($id)
     {
-        $comments = BlogComment::with('user:id,username,avatar')
-            ->where('blog_id', $blogId)
+        $comments = BlogComment::where('blog_id', $id)
+            ->with('user:id,username,avatar')
             ->latest()
             ->get();
 
         return response()->json($comments);
     }
 
-    // ===== POST COMMENT =====
+    // POST /blogs/{id}/comments
     public function store(Request $request, $id)
     {
         $request->validate([
-            'content' => 'required|string'
+            'content' => 'required|string|max:1000',
         ]);
 
         $comment = BlogComment::create([
+            'content' => $request->content,
             'blog_id' => $id,
             'user_id' => auth()->id(),
-            'content' => $request->content
         ]);
 
-        return $comment->load('user:id,username,avatar');
+        return response()->json([
+            'message' => 'Bình luận thành công',
+            'data' => $comment->load('user'),
+        ], 201);
     }
-
 }
+

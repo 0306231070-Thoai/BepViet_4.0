@@ -5,61 +5,97 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    public function feed()
+    /**
+     * Tạo blog
+     */
+    public function store(Request $request)
     {
-        return response()->json(
-            Blog::with([
-                    'user:id,username,avatar',
-                    'category:id,name'
-                ])
-                ->where('status', 'Approved')
-                ->latest()
-                ->paginate(5)
-        );
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+            'category_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('blogs', 'public');
+        }
+
+        $blog = Blog::create([
+            'title'       => $request->title,
+            'excerpt'     => Str::limit(strip_tags($request->content), 150),
+            'content'     => $request->content,
+            'image'       => $imagePath,
+            'status'      => 'Approved',
+            'user_id'     => auth()->id(),
+            'category_id' => $request->category_id,
+        ]);
+
+        // Load quan hệ để React dùng ngay
+        $blog->load([
+            'user:id,username,avatar',
+            'category:id,name'
+        ]);
+
+        return response()->json($blog, 201);
     }
 
-    // ===== BLOG DETAIL =====
+    /**
+     * Chi tiết blog + comments
+     */
     public function show($id)
     {
         $blog = Blog::with([
             'user:id,username,avatar',
+            'category:id,name',
+            'comments' => function ($q) {
+                $q->latest();
+            },
             'comments.user:id,username,avatar'
-        ])->find($id);
-
-        if (!$blog) {
-            return response()->json([
-                'message' => 'Không tìm thấy bài viết'
-            ], 404);
-        }
+        ])->findOrFail($id);
 
         return response()->json($blog);
     }
-    
-    public function store(Request $request)
+
+    /**
+     * Blog feed
+     */
+    public function feed(Request $request)
     {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'content'     => 'required|string',
-            'image'       => 'nullable|string',
-            'category_id' => 'nullable|integer|exists:categories,id',
-        ]);
+        $query = Blog::with(['user:id,username', 'category:id,name'])
+            ->where('status', 'Approved');
 
-        $blog = Blog::create([
-            'user_id'     => $request->user()->id,
-            'title'       => $request->title,
-            'excerpt'     => $request->excerpt ?? null,
-            'content'     => $request->content,
-            'image'       => $request->image,
-            'category_id' => $request->category_id,
-            'status'      => 'published', // hoặc pending
-        ]);
+        // 🔍 SEARCH theo title + content
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('content', 'like', '%' . $request->search . '%');
+            });
+        }
 
-        return response()->json([
-            'message' => 'Tạo bài viết thành công',
-            'data'    => $blog
-        ], 201);
+        $blogs = $query->latest()->paginate(5);
+
+        return response()->json($blogs);
     }
+    /**
+     * Blog feed từ những người mình follow
+     */
+    public function followingFeed()
+    {
+        $followingIds = auth()->user()->following()->pluck('users.id');
+
+        $blogs = Blog::with('user:id,username,avatar')
+            ->whereIn('user_id', $followingIds)
+            ->where('status', 'Approved')
+            ->latest()
+            ->paginate(5);
+
+        return response()->json($blogs);
+    }
+
 }
