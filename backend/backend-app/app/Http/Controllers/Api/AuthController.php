@@ -9,6 +9,66 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+public function login(Request $request)
+{
+    try {
+        // 1. Validate dữ liệu đầu vào
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // 2. Tìm người dùng
+        $user = User::where('username', $request->username)->first();
+
+        // 3. Kiểm tra sự tồn tại và mật khẩu
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tên đăng nhập hoặc mật khẩu không chính xác.'
+            ], 401);
+        }
+
+        // 4. Kiểm tra trạng thái tài khoản (Status = 0 là bị khóa)
+        if ($user->status == 0) { 
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
+            ], 403);
+        }
+
+        // 5. Tạo Token bảo mật (Sanctum)
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'status' => 'success',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => $user->role, // Phân quyền cho đối tượng người dùng [cite: 14, 22]
+                'avatar' => $user->avatar, // Hiển thị trên Profile cá nhân [cite: 43]
+                'bio' => $user->bio
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Có lỗi hệ thống xảy ra: ' . $e->getMessage()
+        ], 500);
+    }
+}
    public function register(Request $request)
 {
     $validator = Validator::make($request->all(), [
@@ -39,45 +99,7 @@ class AuthController extends Controller
         'user' => $user
     ], 201);
 }
-    public function login(Request $request)
-    {
-        // Validate input
-        $request->validate([
-            'username' => 'required', // React đang gửi username qua trường này
-            'password' => 'required',
-        ]);
-
-        // Tìm người dùng theo username (khớp với React của bạn)
-        $user = User::where('username', $request->username)->first();
-
-       // Kiểm tra user và mật khẩu
-if (!$user || !Hash::check($request->password, $user->password)) {
-    return response()->json(['message' => 'Thông tin đăng nhập không chính xác.'], 401);
-}
-
-// SỬA TẠI ĐÂY: Nếu status là false (0), tức là bị khóa
-if (!$user->status) { 
-    return response()->json(['message' => 'Tài khoản của bạn đang bị khóa.'], 403);
-}
-
-// Nếu vượt qua được các bước trên thì mới tạo Token
-$token = $user->createToken('auth_token')->plainTextToken;
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'status' => 'success',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => [
-                'id' => $user->id,
-                'username' => $user->username,
-                'email' => $user->email,
-                'role' => $user->role,
-                'avatar' => $user->avatar,
-                'bio' => $user->bio
-            ]
-        ], 200);
-    }
+   
 
     /**
  * Xử lý đăng xuất người dùng

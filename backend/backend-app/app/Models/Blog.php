@@ -29,4 +29,10 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class);
     }
+    /** Một blog có thể bị nhiều report */
+public function reports()
+{
+    return $this->morphMany(Report::class, 'target');
+}
+
 }
