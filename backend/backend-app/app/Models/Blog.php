@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Category;
-
+use App\Models\User;
+use App\Models\BlogComment;
 
 class Blog extends Model
 {
@@ -19,18 +18,33 @@ class Blog extends Model
         'category_id',
     ];
 
+    protected $appends = ['image_url'];
+
+    /* ================= RELATION ================= */
+
     public function user()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(User::class)->withDefault([
+            'username' => 'Ẩn danh',
+            'avatar' => null,
+        ]);
     }
 
     public function comments()
     {
-        return $this->hasMany(BlogComment::class)->latest();
+        return $this->hasMany(BlogComment::class)
+                    ->latest();
+    }
+
+    /* ================= ACCESSOR ================= */
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        // VD: /storage/blogs/abc.jpg
+        return asset('storage/' . $this->image);
     }
 }

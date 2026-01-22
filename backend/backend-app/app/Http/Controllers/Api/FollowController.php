@@ -4,33 +4,72 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Models\Fllow;
-
+use Illuminate\Support\Facades\Auth;
 
 class FollowController extends Controller
 {
-    // Follow / Unfollow
-    public function toggle($userId)
+    
+    public function toggle($id)
     {
-        $user = auth()->user();
-
-        if ($user->id == $userId) {
-            return response()->json(['message' => 'Cannot follow yourself'], 400);
+        if (!Auth::check()) {
+            return response()->json([
+                'message' => 'Chưa đăng nhập'
+            ], 401);
         }
 
-        $user->following()->toggle($userId);
+        $targetUser = User::find($id);
+        if (!$targetUser) {
+            return response()->json([
+                'message' => 'User không tồn tại'
+            ], 404);
+        }
+
+        // Không cho tự follow
+        if ($targetUser->id === Auth::id()) {
+            return response()->json([
+                'message' => 'Không thể theo dõi chính mình'
+            ], 400);
+        }
+
+        $authUser = Auth::user();
+
+        $isFollowing = $authUser
+            ->following()
+            ->where('followed_id', $targetUser->id)
+            ->exists();
+
+        if ($isFollowing) {
+            $authUser->following()->detach($targetUser->id);
+        } else {
+            $authUser->following()->attach($targetUser->id);
+        }
 
         return response()->json([
-            'isFollowing' => $user->following()->where('users.id', $userId)->exists()
+            'isFollowing' => !$isFollowing
         ]);
     }
 
-    // Danh sách following
+    
     public function following()
     {
-        return response()->json(
-            auth()->user()->following()->select('id', 'username', 'avatar')->get()
-        );
+        if (!Auth::check()) {
+            return response()->json([]);
+        }
+
+        $users = Auth::user()
+            ->following()
+            ->select('users.id', 'users.username', 'users.avatar')
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'avatar' => $user->avatar
+                        ? asset('storage/' . $user->avatar)
+                        : null,
+                ];
+            });
+
+        return response()->json($users); 
     }
 }

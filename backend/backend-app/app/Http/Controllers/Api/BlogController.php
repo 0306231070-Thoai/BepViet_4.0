@@ -3,22 +3,62 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Blog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Models\Blog;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    /**
-     * Tạo blog
-     */
+    public function feed(Request $request)
+    {
+        $search = $request->query('search');
+
+        $blogs = Blog::with(['user:id,username,avatar'])
+            ->where('status', 'published')
+            ->when($search, function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%");
+            })
+            ->latest()
+            ->paginate(5);
+
+        return response()->json($blogs);
+    }
+
+
+
+    public function show($id)
+    {
+        $blog = Blog::with([
+            'user:id,username,avatar',
+            'comments.user:id,username,avatar'
+        ])
+        ->where('id', $id)
+        ->where('status', 'published')
+        ->first();
+
+        if (!$blog) {
+            return response()->json(['message' => 'Không tìm thấy bài viết'], 404);
+        }
+
+        $blog->user->is_following = Auth::check()
+            ? Auth::user()
+                ->following()
+                ->where('followed_id', $blog->user->id)
+                ->exists()
+            : false;
+
+        return response()->json($blog);
+    }
+
+ 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required',
-            'category_id' => 'nullable|exists:categories,id',
-            'image' => 'nullable|image|max:2048',
+            'title'   => 'required|string|max:255',
+            'excerpt' => 'required|string|max:500',
+            'content' => 'required|string',
+            'image'   => 'nullable|image|max:2048',
         ]);
 
         $imagePath = null;
@@ -27,75 +67,78 @@ class BlogController extends Controller
         }
 
         $blog = Blog::create([
-            'title'       => $request->title,
-            'excerpt'     => Str::limit(strip_tags($request->content), 150),
-            'content'     => $request->content,
-            'image'       => $imagePath,
-            'status'      => 'Approved',
-            'user_id'     => auth()->id(),
-            'category_id' => $request->category_id,
-        ]);
-
-        // Load quan hệ để React dùng ngay
-        $blog->load([
-            'user:id,username,avatar',
-            'category:id,name'
+            'title'   => $request->title,
+            'excerpt' => $request->excerpt,
+            'content' => $request->content,
+            'image'   => $imagePath,
+            'status'  => 'published', 
+            'user_id' => Auth::id(),
         ]);
 
         return response()->json($blog, 201);
     }
 
-    /**
-     * Chi tiết blog + comments
-     */
-    public function show($id)
+    
+    public function update(Request $request, $id)
     {
-        $blog = Blog::with([
-            'user:id,username,avatar',
-            'category:id,name',
-            'comments' => function ($q) {
-                $q->latest();
-            },
-            'comments.user:id,username,avatar'
-        ])->findOrFail($id);
+        $blog = Blog::findOrFail($id);
+
+        if ($blog->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Không có quyền'], 403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'excerpt' => 'required|string|max:500',
+            'content' => 'required|string',
+            'image' => 'nullable|image|max:2048',
+            'category_id' => 'nullable|exists:categories,id',
+            'status' => 'nullable|in:draft,published',
+        ]);
+
+        $data = $request->only([
+            'title',
+            'excerpt',
+            'content',
+            'category_id',
+            'status'
+        ]);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('blogs', 'public');
+        }
+
+        $blog->update($data);
 
         return response()->json($blog);
     }
 
     /**
-     * Blog feed
+     * =========================
+     * DELETE BLOG
+     * DELETE /api/blogs/{id}
+     * =========================
      */
-    public function feed(Request $request)
+    public function destroy($id)
     {
-        $query = Blog::with(['user:id,username', 'category:id,name'])
-            ->where('status', 'Approved');
+        $blog = Blog::find($id);
 
-        // 🔍 SEARCH theo title + content
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('content', 'like', '%' . $request->search . '%');
-            });
+        if (!$blog) {
+            return response()->json(['message' => 'Không tìm thấy blog'], 404);
         }
 
-        $blogs = $query->latest()->paginate(5);
+        if ($blog->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Không có quyền'], 403);
+        }
 
-        return response()->json($blogs);
+        if ($blog->image) {
+            Storage::disk('public')->delete($blog->image);
+        }
+
+        $blog->delete();
+
+        return response()->json([
+            'message' => 'Xóa blog thành công'
+        ]);
     }
-    /**
-     * Blog feed từ những người mình follow
-     */
-    public function followingFeed()
-    {
-        $followingIds = auth()->user()->following()->pluck('users.id');
-
-        $blogs = Blog::with('user:id,username,avatar')
-            ->whereIn('user_id', $followingIds)
-            ->where('status', 'Approved')
-            ->latest()
-            ->paginate(5);
-
-        return response()->json($blogs);
-    }
-
 }
