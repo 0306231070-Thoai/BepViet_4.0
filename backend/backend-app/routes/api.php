@@ -48,4 +48,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/recipes/{id}/approve', [AdminRecipeController::class, 'approve']);
         Route::put('/recipes/{id}/reject', [AdminRecipeController::class, 'reject']);
         Route::put('/recipes/{id}/hide', [AdminRecipeController::class, 'hide']);
-   
+    //POST 
+
+    Route::get('/posts', [AdminPostController::class, 'index']);
+    Route::get('/posts/{id}', [AdminPostController::class, 'show']);
+
+    Route::put('/posts/{id}/approve', [AdminPostController::class, 'approve']);
+    Route::put('/posts/{id}/reject', [AdminPostController::class, 'reject']);
+  
