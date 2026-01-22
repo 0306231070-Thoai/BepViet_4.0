@@ -37,4 +37,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('users/{id}/toggle-status', [AdminUserController::class, 'toggleStatus']);
     Route::apiResource('/categories', AdminCategoryController::class);
 
-    
+    // Recipes
+    // Public API xem công thức
+   
+        Route::get('/recipes/pending', [AdminRecipeController::class, 'pending']);
+        Route::get('/recipes/published', [AdminRecipeController::class, 'published']);
+        Route::get('/recipes/hidden', [AdminRecipeController::class, 'hidden']);
+
+        Route::get('/recipes/{id} ', [AdminRecipeController::class, 'show']);
+        Route::put('/recipes/{id}/approve', [AdminRecipeController::class, 'approve']);
+        Route::put('/recipes/{id}/reject', [AdminRecipeController::class, 'reject']);
+        Route::put('/recipes/{id}/hide', [AdminRecipeController::class, 'hide']);
+   
