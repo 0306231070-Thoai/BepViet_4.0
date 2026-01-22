@@ -31,3 +31,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
     
+    //USERS
+    Route::get('/users', [AdminUserController::class, 'index']);
+    Route::put('users/{id}', [AdminUserController::class, 'update']);
+    Route::patch('users/{id}/toggle-status', [AdminUserController::class, 'toggleStatus']);
+    Route::apiResource('/categories', AdminCategoryController::class);
+
+    
