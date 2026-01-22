@@ -30,4 +30,9 @@ class Report extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
+    /** Nội dung bị báo cáo (polymorphic) */
+    public function target()
+    {
+        return $this->morphTo();
+    }
 }
