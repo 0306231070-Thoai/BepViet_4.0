@@ -5,37 +5,48 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AdminCategoryController extends Controller
 {
     public function index()
     {
-        return Category::all();
+        return response()->json(
+            Category::orderBy('id', 'desc')->get()
+        );
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name'=>'required',
-            'type'=>'required'
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
-        Category::create($request->only('name','description','type'));
+        // Tạo slug tự động từ name
+        $data['slug'] = Str::slug($data['name']);
 
-        return response()->json(['message'=>'Category created']);
+        // Đảm bảo slug không trùng
+        if (Category::where('slug', $data['slug'])->exists()) {
+            $data['slug'] .= '-' . time();
+        }
+
+        $category = Category::create($data);
+
+        return response()->json($category, 201);
     }
 
-    public function update(Request $request, $id)
+    public function show($id)
     {
-        $category = Category::findOrFail($id);
-        $category->update($request->only('name','description'));
-
-        return response()->json(['message'=>'Category updated']);
+        $category = Category::with('recipes')->findOrFail($id);
+        return response()->json($category);
     }
 
     public function destroy($id)
     {
-        Category::destroy($id);
-        return response()->json(['message'=>'Category deleted']);
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        return response()->json(['message' => 'Deleted']);
     }
 }
