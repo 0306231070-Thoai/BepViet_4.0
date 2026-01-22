@@ -10,20 +10,19 @@ use Illuminate\Database\Eloquent\Model;
  *
  * Model đại diện cho bảng `follows`
  * - Quản lý quan hệ theo dõi giữa user
+ * - Một user có thể follow nhiều người khác, và cũng có nhiều follower.
  */
+
 class Follow extends Model
 {
+
     use HasFactory;
 
-    protected $table = 'follows';
-
     /**
-     * Các cột cho phép gán giá trị hàng loạt
+     * Các cột cho phép gán giá trị hàng loạt.
+     * - following_id: người được theo dõi
      */
-    protected $fillable = [
-        'follower_id',
-        'following_id',
-    ];
+    protected $fillable = ['following_id'];
 
     /** User thực hiện follow */
     public function follower()

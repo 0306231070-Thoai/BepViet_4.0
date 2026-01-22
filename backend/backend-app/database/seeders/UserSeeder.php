@@ -25,6 +25,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456'),
             'bio' => 'Quản trị viên hệ thống',
             'avatar' => null,
+            'role' => 'admin',
             // role, status dùng default trong migration
         ]);
 

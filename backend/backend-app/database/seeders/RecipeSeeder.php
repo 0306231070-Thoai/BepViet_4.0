@@ -36,6 +36,6 @@ class RecipeSeeder extends Seeder
             'cooking_time' => 45,
             'difficulty' => 'Easy',
             'servings' => 3,
-        ]);
+        ]); 
     }
 }

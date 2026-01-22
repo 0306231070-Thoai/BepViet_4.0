@@ -41,4 +41,9 @@ class QuestionAnswer extends Model
     {
         return $this->hasMany(QuestionAnswer::class, 'parent_id');
     }
+    /** Một câu hỏi hoặc câu trả lời có thể bị nhiều report */
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'target');
+    }
 }

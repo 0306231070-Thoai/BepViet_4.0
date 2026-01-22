@@ -34,4 +34,11 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+/** Một bình luận có thể bị nhiều report */
+public function reports()
+{
+    return $this->morphMany(Report::class, 'target');
+}
+
+
 }
