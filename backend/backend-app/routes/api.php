@@ -55,4 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::put('/posts/{id}/approve', [AdminPostController::class, 'approve']);
     Route::put('/posts/{id}/reject', [AdminPostController::class, 'reject']);
-  
+    //REPORT
+    Route::get('/reports', [AdminReportController::class, 'index']);
+    Route::put('/reports/{id}/resolve', [AdminReportController::class, 'resolve']);
+    Route::put('/reports/{id}/review', [AdminReportController::class, 'review']);
