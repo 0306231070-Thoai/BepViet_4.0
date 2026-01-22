@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\CookbookController;
-
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -26,6 +25,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Thêm/Xóa món ăn khỏi bộ sưu tập
     Route::post('cookbooks/{id}/add-recipe', [CookbookController::class, 'addRecipe']);
     Route::delete('cookbooks/{id}/recipes/{recipe_id}', [CookbookController::class, 'removeRecipe']);
-    
     
 });

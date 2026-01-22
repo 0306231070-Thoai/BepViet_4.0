@@ -14,8 +14,6 @@ class CookbookController extends Controller
      */
     public function index()
     {
-        // Sử dụng Auth::id() để chỉ lấy bộ sưu tập của người đang đăng nhập
-        // Đếm số lượng công thức bên trong mỗi bộ sưu tập (recipes_count)
         $cookbooks = Cookbook::withCount('recipes')
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
@@ -26,23 +24,24 @@ class CookbookController extends Controller
             'data' => $cookbooks
         ]);
     }
+
     /**
-     * Tạo mới một bộ sưu tập với hình ảnh được chọn sẵn.
+     * Tạo mới một bộ sưu tập (Đã xóa bỏ xử lý ảnh để tránh lỗi SQL)
      */
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
-            'image' => 'nullable|string', // Chấp nhận tên file ảnh có sẵn từ frontend
+            // Đã xóa validate image ở đây
         ]);
+
         $cookbook = new Cookbook();
         $cookbook->name = $request->name;
         $cookbook->description = $request->description;
         $cookbook->user_id = Auth::id();
         
-        // Lưu tên file ảnh (ví dụ: 'ansang.png'), nếu không gửi thì dùng mặc định
-        $cookbook->image = $request->image ?? 'macdinh.png'; 
+        // Đã xóa dòng $cookbook->image = ... vì CSDL không có cột này
         
         $cookbook->save();
 
@@ -52,25 +51,35 @@ class CookbookController extends Controller
             'data' => $cookbook
         ], 201);
     }
-    /**
-     * Lấy chi tiết bộ sưu tập và danh sách món ăn bên trong.
-     */
-    public function show($id)
-    {
-        // Eager load recipes và thông tin người tạo công thức (nếu cần)
-        $cookbook = Cookbook::with(['recipes' => function($query) {
-            $query->select('recipes.id', 'recipes.title', 'recipes.image', 'recipes.description');
-        }])
-        ->where('user_id', Auth::id())
-        ->findOrFail($id);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $cookbook
-        ]);
-    }
     /**
-     * Thêm một công thức vào bộ sưu tập (quan hệ n-n).
+     * Lấy chi tiết bộ sưu tập.
+     */
+   /**
+ * Lấy chi tiết bộ sưu tập.
+ */
+/**
+ * Lấy chi tiết bộ sưu tập kèm danh sách món ăn.
+ */
+public function show($id) {
+    $cookbook = Cookbook::withCount('recipes')
+    ->with(['recipes' => function($query) {
+        $query->select(
+            'recipes.id',
+            'recipes.title',
+            'recipes.main_image',
+            'recipes.cooking_time',
+            'recipes.difficulty'
+        );
+    }])
+    ->where('user_id', Auth::id())
+    ->findOrFail($id);
+
+
+    return response()->json(['status' => 'success', 'data' => $cookbook]);
+}
+    /**
+     * Thêm công thức vào bộ sưu tập.
      */
     public function addRecipe(Request $request, $id)
     {
@@ -86,9 +95,6 @@ class CookbookController extends Controller
         ]);
     }
 
-    /**
-     * Xóa công thức khỏi bộ sưu tập.
-     */
     public function removeRecipe($cookbookId, $recipeId)
     {
         $cookbook = Cookbook::where('user_id', Auth::id())->findOrFail($cookbookId);
@@ -100,9 +106,6 @@ class CookbookController extends Controller
         ]);
     }
 
-    /**
-     * Xóa toàn bộ bộ sưu tập.
-     */
     public function destroy($id)
     {
         $cookbook = Cookbook::where('user_id', Auth::id())->findOrFail($id);

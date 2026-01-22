@@ -21,7 +21,7 @@ class RecipeSeeder extends Seeder
             'category_id' => 1,    // Miền Bắc
             'title' => 'Phở bò Hà Nội',
             'description' => 'Món phở truyền thống miền Bắc',
-            'main_image' => 'pho-bo.jpg',
+            'main_image' => 'recipes/pho-bo.jpg',
             'cooking_time' => 60,
             'difficulty' => 'Medium',
             'servings' => 4,
@@ -32,7 +32,7 @@ class RecipeSeeder extends Seeder
             'category_id' => 2,    // Miền Trung
             'title' => 'Mì Quảng',
             'description' => 'Đặc sản miền Trung',
-            'main_image' => 'mi-quang.jpg',
+            'main_image' => 'recipes/mi-quang.jpg',
             'cooking_time' => 45,
             'difficulty' => 'Easy',
             'servings' => 3,
