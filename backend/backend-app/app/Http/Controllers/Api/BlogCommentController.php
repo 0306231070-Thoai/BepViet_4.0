@@ -10,12 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class BlogCommentController extends Controller
 {
-    /**
-     * ============================
-     * LẤY DANH SÁCH COMMENT
-     * GET /api/blogs/{id}/comments
-     * ============================
-     */
+    
     public function index($id)
     {
         $blog = Blog::find($id);
@@ -31,12 +26,7 @@ class BlogCommentController extends Controller
         return response()->json($comments);
     }
 
-    /**
-     * ============================
-     * TẠO COMMENT
-     * POST /api/blogs/{id}/comments
-     * ============================
-     */
+    
     public function store(Request $request, $id)
     {
        
@@ -59,18 +49,12 @@ class BlogCommentController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        // Load user để React dùng ngay
         $comment->load('user:id,username,avatar');
 
         return response()->json($comment, 201);
     }
 
-    /**
-     * ============================
-     * XÓA COMMENT
-     * DELETE /api/blog-comments/{id}
-     * ============================
-     */
+    
     public function destroy($id)
     {
         if (!Auth::check()) {
