@@ -50,6 +50,7 @@ class Recipe extends Model
         'description',
         'main_image',
         'cooking_time',
+        'status',
         'difficulty',
         'servings',
     ];
@@ -115,7 +116,10 @@ class Recipe extends Model
             'recipe_id',
             'cookbook_id'
         );
-
     }
-
+    /** Một công thức có thể bị nhiều report */
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'target');
+    }
 }
