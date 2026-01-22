@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminPostController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\UserTraffic;
+use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 
 use App\Http\Controllers\Api\AuthController;
 
@@ -28,15 +30,4 @@ Route::middleware('auth:sanctum')->group(function () {
 //API ADMIN
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
-
-    Route::apiResource('/users', AdminUserController::class);
-    Route::apiResource('/categories', AdminCategoryController::class);
-
-    Route::get('/posts', [AdminPostController::class, 'index']);
-    Route::put('/posts/{id}/approve', [AdminPostController::class, 'approve']);
-
-    Route::get('/reports', [AdminReportController::class, 'index']);
-    Route::put('/reports/{id}/resolve', [AdminReportController::class, 'resolve']);
-
-    Route::get('/settings', [AdminSettingController::class, 'index']);
-    Route::put('/settings', [AdminSettingController::class, 'update']);
+    
