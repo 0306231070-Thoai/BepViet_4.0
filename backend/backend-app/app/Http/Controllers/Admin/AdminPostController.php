@@ -24,4 +24,25 @@ class AdminPostController extends Controller
     {
         return Blog::with('user')->paginate(10);
     }
+
+    //PHE DUYET
+    public function approve($id)
+    {
+        $post = Blog::findOrFail($id);
+        $post->status = 'approved';
+        $post->save();
+
+        return response()->json(['message' => 'Post approved']);
+    }
+
+    // ✖ TỪ CHỐI
+    public function reject($id)
+    {
+        $post = Blog::findOrFail($id);
+        $post->status = 'rejected';
+        $post->save();
+
+        return response()->json(['message' => 'Post rejected']);
+    }
+    
 }
