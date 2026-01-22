@@ -62,4 +62,47 @@ public function hidden()
     }
 
     // Từ chối recipe
+    public function reject(Request $request, $id)
+    {
+        $recipe = Recipe::findOrFail($id);
+
+        $recipe->update([
+            'status' => 'Hidden'
+        ]);
+
+        return response()->json([
+            'message' => 'Recipe đã bị từ chối'
+        ]);
+    }
+
+    // Ẩn recipe đã publish
+    // 3️⃣ Ẩn recipe (Published -> Hidden)
+    public function hide($id)
+    {
+        $recipe = Recipe::findOrFail($id);
+
+        if ($recipe->status !== 'Published') {
+            return response()->json([
+                'message' => 'Chỉ có thể ẩn recipe đã Published'
+            ], 400);
+        }
+
+        $recipe->update([
+            'status' => 'Hidden'
+        ]);
+
+        return response()->json([
+            'message' => 'Recipe đã bị ẩn'
+        ]);
+    }
+    //show
+public function show($id)
+{
+    $recipe = Recipe::with(['user:id,username', 'category:id,name'])
+        ->findOrFail($id);
+
+    return response()->json([
+        'data' => $recipe
+    ]);
+}
 }
