@@ -59,3 +59,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reports', [AdminReportController::class, 'index']);
     Route::put('/reports/{id}/resolve', [AdminReportController::class, 'resolve']);
     Route::put('/reports/{id}/review', [AdminReportController::class, 'review']);
+
+    //settings
+    Route::get('/settings', [AdminSettingController::class, 'index']);
+    Route::put('/settings', [AdminSettingController::class, 'update']);
+
+    Route::get('/admin/users/traffic', [UserTraffic::class, 'userTraffic']);
