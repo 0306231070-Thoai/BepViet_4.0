@@ -22,29 +22,23 @@ Route::get('/blogs/{id}/comments', [BlogCommentController::class, 'index']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
-
     
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'show']);
         Route::post('/update', [ProfileController::class, 'update']);
         Route::post('/avatar', [ProfileController::class, 'updateAvatar']);
         Route::post('/change-password', [ProfileController::class, 'changePassword']);
     });
-
    
     Route::post('/blogs', [BlogController::class, 'store']);
     Route::put('/blogs/{id}', [BlogController::class, 'update']);
     Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
-
     
     Route::post('/blogs/{id}/comments', [BlogCommentController::class, 'store']);
     Route::delete('/blog-comments/{id}', [BlogCommentController::class, 'destroy']);
 
-
-    
     Route::post('/follow/{id}', [FollowController::class, 'toggle']);
     Route::get('/following', [FollowController::class, 'following']);
 });

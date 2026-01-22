@@ -17,7 +17,6 @@ class BlogComment extends Model
         'user_id',
     ];
 
-    /* ================= RELATION ================= */
 
     public function user()
     {

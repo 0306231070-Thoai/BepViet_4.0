@@ -20,7 +20,6 @@ class Blog extends Model
 
     protected $appends = ['image_url'];
 
-    /* ================= RELATION ================= */
 
     public function user()
     {
@@ -36,15 +35,12 @@ class Blog extends Model
                     ->latest();
     }
 
-    /* ================= ACCESSOR ================= */
-
     public function getImageUrlAttribute()
     {
         if (!$this->image) {
             return null;
         }
 
-        // VD: /storage/blogs/abc.jpg
         return asset('storage/' . $this->image);
     }
 }

@@ -14,8 +14,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /* ================= ATTRIBUTES ================= */
-
     protected $fillable = [
         'username',
         'email',
@@ -40,7 +38,6 @@ class User extends Authenticatable
         ];
     }
 
-    /* ================= RELATIONS ================= */
 
     // Blog của user
     public function blogs()
@@ -76,7 +73,6 @@ class User extends Authenticatable
         );
     }
 
-    /* ================= ACCESSOR ================= */
 
     public function getAvatarUrlAttribute()
     {
