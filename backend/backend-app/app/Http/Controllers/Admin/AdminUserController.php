@@ -28,4 +28,29 @@ class AdminUserController extends Controller
         );
     }
 
+    // Khóa / mở nhanh
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->role === 'admin' && $user->status == 1) {
+            $adminCount = User::where('role', 'admin')
+                ->where('status', 1)
+                ->count();
+
+            if ($adminCount <= 1) {
+                return response()->json([
+                    'message' => 'Không thể khóa admin cuối cùng'
+                ], 403);
+            }
+        }
+
+        $user->status = !$user->status;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Cập nhật trạng thái thành công',
+            'status' => $user->status
+        ]);
+    }
 }
