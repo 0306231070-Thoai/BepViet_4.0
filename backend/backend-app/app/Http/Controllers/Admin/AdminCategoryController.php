@@ -42,6 +42,32 @@ class AdminCategoryController extends Controller
         return response()->json($category);
     }
 
+    public function update(Request $request, $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        // Update slug theo name mới
+        $slug = Str::slug($data['name']);
+        if (
+            Category::where('slug', $slug)
+                ->where('id', '!=', $id)
+                ->exists()
+        ) {
+            $slug .= '-' . time();
+        }
+
+        $data['slug'] = $slug;
+
+        $category->update($data);
+
+        return response()->json($category);
+    }
+
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
